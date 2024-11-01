@@ -1,0 +1,19 @@
+# This is a generated file; do not edit or check into version control.
+connectivity_plus=C:\\sdk\\pub_cache\\hosted\\pub.dev\\connectivity_plus-6.1.0\\
+firebase_analytics=C:\\sdk\\pub_cache\\hosted\\pub.dev\\firebase_analytics-11.3.3\\
+firebase_analytics_web=C:\\sdk\\pub_cache\\hosted\\pub.dev\\firebase_analytics_web-0.5.10+2\\
+firebase_core=C:\\sdk\\pub_cache\\hosted\\pub.dev\\firebase_core-3.6.0\\
+firebase_core_web=C:\\sdk\\pub_cache\\hosted\\pub.dev\\firebase_core_web-2.18.1\\
+path_provider_linux=C:\\sdk\\pub_cache\\hosted\\pub.dev\\path_provider_linux-2.2.1\\
+path_provider_windows=C:\\sdk\\pub_cache\\hosted\\pub.dev\\path_provider_windows-2.3.0\\
+screen_retriever=C:\\sdk\\pub_cache\\hosted\\pub.dev\\screen_retriever-0.2.0\\
+screen_retriever_linux=C:\\sdk\\pub_cache\\hosted\\pub.dev\\screen_retriever_linux-0.2.0\\
+screen_retriever_macos=C:\\sdk\\pub_cache\\hosted\\pub.dev\\screen_retriever_macos-0.2.0\\
+screen_retriever_windows=C:\\sdk\\pub_cache\\hosted\\pub.dev\\screen_retriever_windows-0.2.0\\
+shared_preferences=C:\\sdk\\pub_cache\\hosted\\pub.dev\\shared_preferences-2.3.2\\
+shared_preferences_android=C:\\sdk\\pub_cache\\hosted\\pub.dev\\shared_preferences_android-2.3.3\\
+shared_preferences_foundation=C:\\sdk\\pub_cache\\hosted\\pub.dev\\shared_preferences_foundation-2.5.3\\
+shared_preferences_linux=C:\\sdk\\pub_cache\\hosted\\pub.dev\\shared_preferences_linux-2.4.1\\
+shared_preferences_web=C:\\sdk\\pub_cache\\hosted\\pub.dev\\shared_preferences_web-2.4.2\\
+shared_preferences_windows=C:\\sdk\\pub_cache\\hosted\\pub.dev\\shared_preferences_windows-2.4.1\\
+window_manager=C:\\sdk\\pub_cache\\hosted\\pub.dev\\window_manager-0.4.3\\
