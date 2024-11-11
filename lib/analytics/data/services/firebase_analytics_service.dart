@@ -9,7 +9,7 @@ class FirebaseAnalyticsServiceImpl implements IAnalyticsService {
   final _repositories = <String, IAnalyticsRepository>{};
 
   @override
-  void logEvent({required String name, Map<String, Object>? parameters}) {
+  void logEvent({required String name, Map<String, String>? parameters}) {
     for (final r in _repositories.values) {
       try {
         r.logEvent(name: name, parameters: parameters);

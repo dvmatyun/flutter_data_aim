@@ -40,7 +40,7 @@ class FirebaseAnalyticsRepository implements IAnalyticsRepository {
   bool get isInnitted => _completer.isCompleted;
 
   @override
-  Future<void> logEvent({required String name, Map<String, Object>? parameters}) async {
+  Future<void> logEvent({required String name, Map<String, String>? parameters}) async {
     await _completer.future;
 
     try {

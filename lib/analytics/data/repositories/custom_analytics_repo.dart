@@ -52,7 +52,7 @@ class CustomAnalyticsRepo implements IAnalyticsRepository {
   bool get isInnitted => true;
 
   @override
-  Future<void> logEvent({required String name, Map<String, Object?>? parameters}) async {
+  Future<void> logEvent({required String name, Map<String, String?>? parameters}) async {
     final key = '$name;${parameters?.values.join(',')}';
     final eventExist = _scheduledEvents[key];
     if (eventExist != null) {

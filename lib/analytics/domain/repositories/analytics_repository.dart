@@ -8,7 +8,7 @@ abstract class IAnalyticsRepository {
 
   Future<void> logEvent({
     required String name,
-    Map<String, Object>? parameters,
+    Map<String, String>? parameters,
   });
 
   Future<void> pushData();

@@ -24,7 +24,7 @@ class DebugLogAnalyticsRepo implements IAnalyticsRepository {
   bool get isInnitted => true;
 
   @override
-  Future<void> logEvent({required String name, Map<String, Object>? parameters}) async {
+  Future<void> logEvent({required String name, Map<String, String>? parameters}) async {
     _log('logEvent: {$name, $parameters}');
   }
 
