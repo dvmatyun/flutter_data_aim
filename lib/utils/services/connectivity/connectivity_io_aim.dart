@@ -179,7 +179,8 @@ class ConnectivityAimImpl implements IConnectivityAim {
       _lastStatus = ConnectionStatusQyre.none;
     }
     */
-    _connectionSc.add(lastStatus);
+    _lastStatus = ConnectionStatusQyre.internet;
+    _connectionSc.add(ConnectionStatusQyre.internet);
     _lastCheckTime = DateTime.now();
     return lastStatus;
   }
