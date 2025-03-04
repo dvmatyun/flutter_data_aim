@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:custom_data/local_data/data/models/typed_file_data_nested.dart';
 import 'package:custom_data/local_data/data/models/typed_file_data_storage.dart';
 
@@ -9,6 +7,13 @@ class ExampleEntityParentModel implements IHasTypedDictionaryValues {
     required this.name,
     required this.children,
   });
+
+  factory ExampleEntityParentModel.deserializeStorageSingle(ITypedDictionaryReadOnly d, ITypedDataStorage s) {
+    final id = s.dataInt[0];
+    final name = d.getValueInDictionary('name', s.dataInt[1]);
+    final children = ExampleEntityChildModel.deserializeStorageList(d, s);
+    return ExampleEntityParentModel(id: id, name: name ?? '', children: children);
+  }
 
   final int id;
   final String name;
@@ -46,14 +51,11 @@ class ExampleEntityParentModel implements IHasTypedDictionaryValues {
     TypedDynamicStorage builder,
     List<ExampleEntityParentModel> entities,
   ) {
-    // adding identifier:
+    // adding identifier (to save some space and not to repeat the same string for each entity):
     builder.stringData.add(_storageKey);
-    //
-
+    // adding each entity to it's own storage
     for (final e in entities) {
-      final childBuilder = TypedDynamicStorage();
-      e.serializeStorageSingle(dictionary, childBuilder);
-      builder.addChild(childBuilder);
+      builder.addChildFunc((b) => e.serializeStorageSingle(dictionary, b));
     }
   }
 
@@ -77,13 +79,7 @@ class ExampleEntityParentModel implements IHasTypedDictionaryValues {
     final storages = storage.children.where(isContainedInStorage).toList();
     for (final s in storages.expand((v) => v.children)) {
       assert(s.dataInt.length == _intLength, 'Invalid storage type for ExampleEntityParentModel model');
-      for (var i = 0; i < s.dataInt.length; i += _intLength) {
-        final id = s.dataInt[i + 0];
-        final name = dictionary.getValueInDictionary('name', s.dataInt[i + 1]);
-
-        final children = ExampleEntityChildModel.deserializeStorageList(dictionary, s);
-        result.add(ExampleEntityParentModel(id: id, name: name ?? '', children: children));
-      }
+      result.add(ExampleEntityParentModel.deserializeStorageSingle(dictionary, s));
     }
 
     return result;
@@ -98,6 +94,17 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
     required this.name,
     this.children = const <ExampleEntityChildModel>[],
   });
+
+  factory ExampleEntityChildModel.deserializeStorageSingle(ITypedDictionaryReadOnly d, ITypedDataStorage s) {
+    final id = s.dataInt[0];
+    final x = s.dataInt[1];
+    final y = s.dataInt[2];
+    final name = d.getValueInDictionary('name', s.dataInt[3]);
+
+    final children = ExampleEntityChildModel.deserializeStorageList(d, s);
+
+    return ExampleEntityChildModel(id: id, x: x, y: y, name: name ?? '', children: children);
+  }
 
   final int id;
   final int x;
@@ -152,11 +159,9 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
   ) {
     // adding identifier:
     builder.stringData.add(_storageKey);
-    //
+    // adding children
     for (final e in entities) {
-      final childBuilder = TypedDynamicStorage();
-      e.serializeStorageSingle(dictionary, childBuilder);
-      builder.addChild(childBuilder);
+      builder.addChildFunc((b) => e.serializeStorageSingle(dictionary, b));
     }
   }
 
@@ -168,16 +173,7 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
     final storages = storage.children.where(isContainedInStorage).toList();
     for (final s in storages.expand((v) => v.children)) {
       assert(s.dataInt.length == _intLength, 'Invalid storage type for ExampleEntityParentModel model');
-      for (var i = 0; i < s.dataInt.length; i += _intLength) {
-        final id = s.dataInt[i + 0];
-        final x = s.dataInt[i + 1];
-        final y = s.dataInt[i + 2];
-        final name = dictionary.getValueInDictionary('name', s.dataInt[i + 3]);
-
-        final children = ExampleEntityChildModel.deserializeStorageList(dictionary, s);
-
-        result.add(ExampleEntityChildModel(id: id, x: x, y: y, name: name ?? '', children: children));
-      }
+      result.add(ExampleEntityChildModel.deserializeStorageSingle(dictionary, s));
     }
 
     return result;

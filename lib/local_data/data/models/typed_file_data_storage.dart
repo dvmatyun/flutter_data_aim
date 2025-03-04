@@ -222,7 +222,7 @@ class TypedDynamicStorage {
     children.add(child);
   }
 
-  void addChildFunc(Function(TypedDynamicStorage) func) {
+  void addChildFunc(void Function(TypedDynamicStorage) func) {
     final childStorage = TypedDynamicStorage();
     func(childStorage);
     addChild(childStorage);
