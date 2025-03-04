@@ -126,7 +126,7 @@ class TypedFileDataSerializer {
     final buffer = BytesBuilder()
       // Add magic bytes (first 16 bytes)
       ..add(magicBytes);
-    
+
     final offsetObj = _OffsetObject();
     // Serialize object
     _serializeNested(buffer, obj, offsetObj);
@@ -276,4 +276,32 @@ class _OffsetObject {
 
   int entitiesCount = 0;
   void entityCountAdd() => entitiesCount++;
+}
+
+extension ITypedDataStorageExt on ITypedDataStorage {
+  List<T> mapStorageList<T>(
+      bool Function(ITypedDataStorage storage) where,
+      List<T> Function(
+        ITypedDataStorage storage,
+      ) map) {
+    final result = <T>[];
+    if (where(this)) {
+      result.addAll(map(this));
+    }
+    return result;
+  }
+
+  List<T> mapChildrenStorageList<T>(
+      bool Function(ITypedDataStorage storage) where,
+      List<T> Function(
+        ITypedDataStorage storage,
+      ) map) {
+    final result = <T>[];
+    for (final e in children) {
+      if (where(e)) {
+        result.addAll(map(e));
+      }
+    }
+    return result;
+  }
 }

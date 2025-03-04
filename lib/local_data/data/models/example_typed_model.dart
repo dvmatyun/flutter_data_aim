@@ -20,15 +20,73 @@ class ExampleEntityParentModel implements IHasTypedDictionaryValues {
     yield* children.expand((element) => element.dictionaryValues);
   }
 
-  bool isSame(ExampleEntityParentModel other) {
+  bool isEqual(ExampleEntityParentModel other) {
     if (id != other.id || name != other.name) {
       return false;
     }
     if (children.length != other.children.length) {
       return false;
     }
+    for (var i = 0; i < children.length; i++) {
+      if (!children[i].isEqual(other.children[i])) {
+        return false;
+      }
+    }
 
     return true;
+  }
+
+  static const String _storageKey = 'enp';
+  static bool isContainedInStorage(ITypedDataStorage storage) {
+    return storage.dataString.length == 1 && storage.dataString[0] == _storageKey;
+  }
+
+  static void serializeStorageList(
+    ITypedDictionaryReadOnly dictionary,
+    TypedDynamicStorage builder,
+    List<ExampleEntityParentModel> entities,
+  ) {
+    // adding identifier:
+    builder.stringData.add(_storageKey);
+    //
+
+    for (final e in entities) {
+      final childBuilder = TypedDynamicStorage();
+      e.serializeStorageSingle(dictionary, childBuilder);
+      builder.addChild(childBuilder);
+    }
+  }
+
+  // Add bytes for this object and all children
+  static const int _intLength = 2;
+  void serializeStorageSingle(
+    ITypedDictionaryReadOnly dictionary,
+    TypedDynamicStorage builder,
+  ) {
+    builder.intData.add(id);
+    builder.intData.add(dictionary.getIndexInDictionary('name', name));
+    // insert children:
+    builder.addChildFunc((b) => ExampleEntityChildModel.serializeStorageList(dictionary, b, children));
+  }
+
+  static List<ExampleEntityParentModel> deserializeStorageList(
+    ITypedDictionaryReadOnly dictionary,
+    ITypedDataStorage storage,
+  ) {
+    final result = <ExampleEntityParentModel>[];
+    final storages = storage.children.where(isContainedInStorage).toList();
+    for (final s in storages.expand((v) => v.children)) {
+      assert(s.dataInt.length == _intLength, 'Invalid storage type for ExampleEntityParentModel model');
+      for (var i = 0; i < s.dataInt.length; i += _intLength) {
+        final id = s.dataInt[i + 0];
+        final name = dictionary.getValueInDictionary('name', s.dataInt[i + 1]);
+
+        final children = ExampleEntityChildModel.deserializeStorageList(dictionary, s);
+        result.add(ExampleEntityParentModel(id: id, name: name ?? '', children: children));
+      }
+    }
+
+    return result;
   }
 }
 
@@ -38,6 +96,7 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
     required this.x,
     required this.y,
     required this.name,
+    this.children = const <ExampleEntityChildModel>[],
   });
 
   final int id;
@@ -45,9 +104,83 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
   final int y;
   final String name;
 
+  final List<ExampleEntityChildModel> children;
+
   @override
   Iterable<TypedDictionaryValue> get dictionaryValues sync* {
     yield TypedDictionaryValue('name', name);
+  }
+
+  bool isEqual(ExampleEntityChildModel other) {
+    if (id != other.id || name != other.name || x != other.x || y != other.y) {
+      return false;
+    }
+    if (children.length != other.children.length) {
+      return false;
+    }
+    for (var i = 0; i < children.length; i++) {
+      if (!children[i].isEqual(other.children[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  static const int _intLength = 4;
+  void serializeStorageSingle(ITypedDictionaryReadOnly dictionary, TypedDynamicStorage builder) {
+    // inserting data:
+    builder.intData
+      ..add(id)
+      ..add(x)
+      ..add(y)
+      ..add(dictionary.getIndexInDictionary('name', name));
+
+    // insert children:
+    builder.addChildFunc((b) => ExampleEntityChildModel.serializeStorageList(dictionary, b, children));
+  }
+
+  static const String _storageKey = 'enc';
+  static bool isContainedInStorage(ITypedDataStorage storage) {
+    return storage.dataString.length == 1 && storage.dataString[0] == _storageKey;
+  }
+
+  static void serializeStorageList(
+    ITypedDictionaryReadOnly dictionary,
+    TypedDynamicStorage builder,
+    List<ExampleEntityChildModel> entities,
+  ) {
+    // adding identifier:
+    builder.stringData.add(_storageKey);
+    //
+    for (final e in entities) {
+      final childBuilder = TypedDynamicStorage();
+      e.serializeStorageSingle(dictionary, childBuilder);
+      builder.addChild(childBuilder);
+    }
+  }
+
+  static List<ExampleEntityChildModel> deserializeStorageList(
+    ITypedDictionaryReadOnly dictionary,
+    ITypedDataStorage storage,
+  ) {
+    final result = <ExampleEntityChildModel>[];
+    final storages = storage.children.where(isContainedInStorage).toList();
+    for (final s in storages.expand((v) => v.children)) {
+      assert(s.dataInt.length == _intLength, 'Invalid storage type for ExampleEntityParentModel model');
+      for (var i = 0; i < s.dataInt.length; i += _intLength) {
+        final id = s.dataInt[i + 0];
+        final x = s.dataInt[i + 1];
+        final y = s.dataInt[i + 2];
+        final name = dictionary.getValueInDictionary('name', s.dataInt[i + 3]);
+
+        final children = ExampleEntityChildModel.deserializeStorageList(dictionary, s);
+
+        result.add(ExampleEntityChildModel(id: id, x: x, y: y, name: name ?? '', children: children));
+      }
+    }
+
+    return result;
   }
 }
 
@@ -85,18 +218,12 @@ class ExampleSerializer implements ITypedDataSerializer<ExampleEntityParentModel
     final helperDictionary = TypedStringDictionaryCreator()..addValues(allEntities);
     final dictionary = helperDictionary.getTypedDictionary();
 
-    final int32 = Int32List(intLength * allEntities.length);
-    for (var i = 0; i < allEntities.length; i += 1) {
-      final j = i * intLength;
-      final e = allEntities[i];
-      int32[j + 0] = e.id;
-      int32[j + 1] = dictionary.getIndexInDictionary('name', e.name);
-    }
+    final builder = TypedDynamicStorage()
+      ..addChildFunc((b) => ExampleEntityParentModel.serializeStorageList(dictionary, b, allEntities));
 
     final dictionariesToSave = dictionary.dictionaries.toList();
-    final result = TypedFileDataNested.intOnly(int32, children: dictionariesToSave);
 
-    return result;
+    return builder.toTypedStorage(children: dictionariesToSave);
   }
 
   @override
@@ -106,6 +233,9 @@ class ExampleSerializer implements ITypedDataSerializer<ExampleEntityParentModel
     // ignore: cascade_invocations
     dictionariesFound.forEach(helperDictionary.addFromStorage);
     final dictionary = helperDictionary.getTypedDictionary();
+
+    final result = ExampleEntityParentModel.deserializeStorageList(dictionary, storage);
+    /*
     final result = <ExampleEntityParentModel>[];
 
     for (var i = 0; i < storage.dataInt.length; i += intLength) {
@@ -115,6 +245,7 @@ class ExampleSerializer implements ITypedDataSerializer<ExampleEntityParentModel
 
       result.add(ExampleEntityParentModel(id: id, name: name ?? '', children: children));
     }
+    */
 
     return result;
   }

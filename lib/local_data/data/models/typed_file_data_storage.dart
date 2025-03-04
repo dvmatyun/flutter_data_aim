@@ -16,7 +16,10 @@ abstract class ITypedDataSerializer<T extends IHasTypedDictionaryValues> {
 
 abstract class IHasTypedDictionaryValues {
   // first we save this to dictionary
+  // This should give all the values including children
   Iterable<TypedDictionaryValue> get dictionaryValues;
+
+  
 }
 
 enum StoreType {
@@ -190,10 +193,12 @@ class TypedDynamicStorage {
     Int32List? intDataRaw,
     Float32List? floatDataRaw,
     List<String>? stringDataRaw,
+    List<TypedDynamicStorage>? children,
   }) {
     intData = ListInt32DataWrapper(source: intDataRaw);
     floatData = ListFloat32DataWrapper(source: floatDataRaw);
     stringData = ListStringDataWrapper(source: stringDataRaw);
+    this.children = children ?? <TypedDynamicStorage>[];
   }
 
   factory TypedDynamicStorage.fromSource({ITypedDataStorage? storage}) {
@@ -202,6 +207,7 @@ class TypedDynamicStorage {
         intDataRaw: storage.dataInt,
         floatDataRaw: storage.dataDouble,
         stringDataRaw: storage.dataString,
+        children: storage.children.map((e) => TypedDynamicStorage.fromSource(storage: e)).toList(),
       );
     }
     return TypedDynamicStorage();
@@ -210,6 +216,27 @@ class TypedDynamicStorage {
   late final ListInt32DataWrapper intData;
   late final ListFloat32DataWrapper floatData;
   late final ListStringDataWrapper stringData;
+  late final List<TypedDynamicStorage> children;
+
+  void addChild(TypedDynamicStorage child) {
+    children.add(child);
+  }
+
+  void addChildFunc(Function(TypedDynamicStorage) func) {
+    final childStorage = TypedDynamicStorage();
+    func(childStorage);
+    addChild(childStorage);
+  }
+
+  ITypedDataStorage toTypedStorage({List<ITypedDataStorage>? children}) {
+    final childrenTyped = [...?children, ...this.children.map((e) => e.toTypedStorage())];
+    return TypedFileDataNested(
+      dataInt: intData.dataShrinked,
+      dataDouble: floatData.dataShrinked,
+      dataString: stringData.dataShrinked,
+      children: childrenTyped,
+    );
+  }
 }
 
 abstract class IListDataWrapper<T, Y> {
@@ -253,7 +280,7 @@ class ListInt32DataWrapper implements IListDataWrapper<Int32List, int> {
   }
 
   @override
-  Int32List data = Int32List(8);
+  Int32List data = Int32List(0);
 
   @override
   Int32List get dataShrinked => Int32List.fromList(data.sublist(0, _lengthUsed));
@@ -294,7 +321,7 @@ class ListFloat32DataWrapper implements IListDataWrapper<Float32List, double> {
   }
 
   @override
-  Float32List data = Float32List(8);
+  Float32List data = Float32List(0);
 
   @override
   Float32List get dataShrinked => Float32List.fromList(data.sublist(0, _lengthUsed));
@@ -335,7 +362,7 @@ class ListStringDataWrapper implements IListDataWrapper<List<String>, String> {
   }
 
   @override
-  List<String> data = List<String>.filled(8, '');
+  List<String> data = <String>[];
 
   @override
   List<String> get dataShrinked => data.sublist(0, _lengthUsed);
