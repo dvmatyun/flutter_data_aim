@@ -21,6 +21,11 @@ abstract class ITypedDataStorage {
     List<String>? dataString,
     List<ITypedDataStorage>? children,
   });
+
+  /// Use `factory TypedFileDataNested.fromBytes(Uint8List bytes)` 
+  /// to create an instance of this class
+  Uint8List toBytes();
+
 }
 
 class TypedFileDataNested extends TypedFileData implements ITypedDataStorage {
@@ -58,11 +63,12 @@ class TypedFileDataNested extends TypedFileData implements ITypedDataStorage {
   @override
   final List<ITypedDataStorage> children;
 
+  @override
   Uint8List toBytes() {
     return TypedFileDataSerializer.toBytes(this);
   }
 
-  static TypedFileDataNested fromBytes(Uint8List bytes) {
+  factory TypedFileDataNested.fromBytes(Uint8List bytes) {
     return TypedFileDataSerializer.deserializeTypedFileDataNested(bytes);
   }
 
