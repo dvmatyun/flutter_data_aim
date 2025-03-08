@@ -35,5 +35,3 @@ export 'controllers/controller_aim.dart';
 export 'local_data/data/models/typed_file_data_nested.dart';
 export 'local_data/data/models/typed_file_data_storage.dart';
 export 'local_data/data/models/example_typed_model.dart';
-
-export 'local_data/data/services/file_storage_aim.dart';

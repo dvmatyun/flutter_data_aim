@@ -106,6 +106,9 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
     return ExampleEntityChildModel(id: id, x: x, y: y, name: name ?? '', children: children);
   }
 
+  static const int _intLength = 4;
+  static const String _storageKey = 'enc';
+
   final int id;
   final int x;
   final int y;
@@ -134,7 +137,7 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
     return true;
   }
 
-  static const int _intLength = 4;
+  
   void serializeStorageSingle(ITypedDictionaryReadOnly dictionary, TypedDynamicStorage builder) {
     // inserting data:
     builder.intData
@@ -147,7 +150,7 @@ class ExampleEntityChildModel implements IHasTypedDictionaryValues {
     builder.addChildFunc((b) => ExampleEntityChildModel.serializeStorageList(dictionary, b, children));
   }
 
-  static const String _storageKey = 'enc';
+  
   static bool isContainedInStorage(ITypedDataStorage storage) {
     return storage.dataString.length == 1 && storage.dataString[0] == _storageKey;
   }
@@ -207,8 +210,6 @@ class ExampleDtoChildModel {
 }
 
 class ExampleSerializer implements ITypedDataSerializer<ExampleEntityParentModel> {
-  static const intLength = 2;
-
   @override
   ITypedDataStorage serializeToDtoStorage(List<ExampleEntityParentModel> allEntities) {
     final helperDictionary = TypedStringDictionaryCreator()..addValues(allEntities);
@@ -229,20 +230,7 @@ class ExampleSerializer implements ITypedDataSerializer<ExampleEntityParentModel
     // ignore: cascade_invocations
     dictionariesFound.forEach(helperDictionary.addFromStorage);
     final dictionary = helperDictionary.getTypedDictionary();
-
     final result = ExampleEntityParentModel.deserializeStorageList(dictionary, storage);
-    /*
-    final result = <ExampleEntityParentModel>[];
-
-    for (var i = 0; i < storage.dataInt.length; i += intLength) {
-      final id = storage.dataInt[i + 0];
-      final name = dictionary.getValueInDictionary('name', storage.dataInt[i + 1]);
-      final children = <ExampleEntityChildModel>[];
-
-      result.add(ExampleEntityParentModel(id: id, name: name ?? '', children: children));
-    }
-    */
-
     return result;
   }
 }
