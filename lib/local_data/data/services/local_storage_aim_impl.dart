@@ -5,6 +5,21 @@ import 'package:custom_data/local_data/data/models/versioned_data_impl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class LocalStorageSingleKey {
+  LocalStorageSingleKey(this.key, {ILocalStorageAim? storage}) : _storage = storage ?? LocalStorageAimImpl();
+
+  final String key;
+  final ILocalStorageAim _storage;
+
+  Future<String?> getString(String key) {
+    return _storage.getString(key);
+  }
+
+  Future<void> setString(String value) {
+    return _storage.setString(key, value);
+  }
+}
+
 class LocalStorageAimImpl implements ILocalStorageAim {
   SharedPreferences? _prefs;
 
