@@ -11,7 +11,7 @@ class LocalStorageSingleKey {
   final String key;
   final ILocalStorageAim _storage;
 
-  Future<String?> getString(String key) {
+  Future<String?> getString() {
     return _storage.getString(key);
   }
 
