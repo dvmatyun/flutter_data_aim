@@ -18,8 +18,6 @@ abstract class IHasTypedDictionaryValues {
   // first we save this to dictionary
   // This should give all the values including children
   Iterable<TypedDictionaryValue> get dictionaryValues;
-
-  
 }
 
 enum StoreType {
@@ -274,7 +272,8 @@ class ListInt32DataWrapper implements IListDataWrapper<Int32List, int> {
 
   void _resizeIfNeeded(int lengthRequired) {
     if (lengthRequired > data.length) {
-      final newData = Int32List(max(lengthRequired * 2, (lengthRequired ~/ 2) * 4))..setAll(0, data);
+      final newLength = max(((lengthRequired + 2) ~/ 2) * 8, data.length * 2); // Double current size
+      final newData = Int32List(newLength)..setAll(0, data);
       data = newData;
     }
   }
