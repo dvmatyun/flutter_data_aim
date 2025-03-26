@@ -265,10 +265,10 @@ class ListInt32DataWrapper implements IListDataWrapper<Int32List, int> {
   }
 
   @override
-  void addData(Int32List data) {
-    final lenRequired = _lengthUsed + data.length;
+  void addData(Int32List list) {
+    final lenRequired = _lengthUsed + list.length;
     _resizeIfNeeded(lenRequired);
-    data.setAll(_lengthUsed, data);
+    data.setAll(_lengthUsed, list);
     _lengthUsed = lenRequired;
   }
 
@@ -306,10 +306,10 @@ class ListFloat32DataWrapper implements IListDataWrapper<Float32List, double> {
   }
 
   @override
-  void addData(Float32List data) {
-    final lenRequired = _lengthUsed + data.length;
+  void addData(Float32List list) {
+    final lenRequired = _lengthUsed + list.length;
     _resizeIfNeeded(lenRequired);
-    data.setAll(_lengthUsed, data);
+    data.setAll(_lengthUsed, list);
     _lengthUsed = lenRequired;
   }
 
@@ -347,10 +347,10 @@ class ListStringDataWrapper implements IListDataWrapper<List<String>, String> {
   }
 
   @override
-  void addData(List<String> data) {
-    final lenRequired = _lengthUsed + data.length;
+  void addData(List<String> list) {
+    final lenRequired = _lengthUsed + list.length;
     _resizeIfNeeded(lenRequired);
-    data.setAll(_lengthUsed, data);
+    data.setAll(_lengthUsed, list);
     _lengthUsed = lenRequired;
   }
 
