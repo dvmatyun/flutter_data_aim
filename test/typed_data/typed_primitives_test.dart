@@ -10,12 +10,14 @@ void main() {
     'ListInt32DataWrapper tests',
     () {
       final intStorage = ListInt32DataWrapper();
+      intStorage.add(3);
       intStorage.add(1);
       intStorage.add(2);
-      intStorage.addData(Int32List.fromList([3, 4, 5]));
+      intStorage.add(3);
+      intStorage.addData(Int32List.fromList([31, 43, 54]));
       
 
-      expect(intStorage.lengthUsed == 5, true);
+      expect(intStorage.lengthUsed == 7, true);
     },
   );
 }
