@@ -137,7 +137,7 @@ class TypedFileDataSerializer {
     // Serialize object
     _serializeNested(buffer, obj, offsetObj);
 
-    return buffer.toBytes();
+    return buffer.takeBytes();
   }
 
   // ignore: unused_element
