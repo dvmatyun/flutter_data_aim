@@ -29,9 +29,3 @@ export 'analytics/data/repositories/log_analytics_repo.dart';
 export 'analytics/data/repositories/firebase_analytics_repo.dart';
 export 'analytics/data/repositories/custom_analytics_repo.dart';
 export 'controllers/controller_aim.dart';
-
-
-// typed data:
-export 'local_data/data/models/typed_file_data_nested.dart';
-export 'local_data/data/models/typed_file_data_storage.dart';
-export 'local_data/data/models/example_typed_model.dart';
