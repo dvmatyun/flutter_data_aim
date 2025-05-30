@@ -1,5 +1,6 @@
 import 'package:awesome_dio_interceptor/awesome_dio_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class IApiClientAim {
   /// Get response with headers
@@ -50,12 +51,12 @@ abstract class IApiClientAim {
 class ApiClientAim implements IApiClientAim {
   const ApiClientAim(this._dio);
 
-  factory ApiClientAim.construct({required String baseUrl}) {
-    final apiClientNewBaseDioOptions = BaseOptions(
+  factory ApiClientAim.construct({required String baseUrl, BaseOptions? baseOptions}) {
+    final apiClientNewBaseDioOptions = baseOptions ?? BaseOptions(
       baseUrl: baseUrl,
-      sendTimeout: const Duration(milliseconds: 10000),
-      connectTimeout: const Duration(milliseconds: 10000),
-      receiveTimeout: const Duration(milliseconds: 12000),
+      sendTimeout: kIsWeb ? null : const Duration(milliseconds: 10000),
+      connectTimeout:  kIsWeb ? null :const Duration(milliseconds: 10000),
+      receiveTimeout:  kIsWeb ? null :const Duration(milliseconds: 12000),
       listFormat: ListFormat.multiCompatible,
       headers: {
         'accept': 'application/json, text/plain, */*, application/vnd.qyre-v1+json',
